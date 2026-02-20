@@ -135,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
         function (img) {
           const scaleX = canvas.width / img.width;
           const scaleY = canvas.height / img.height;
-          // Use the larger scale to cover, or fit. User usually wants fit for base.
           const scale = Math.min(scaleX, scaleY);
 
           img.set({
@@ -167,7 +166,13 @@ document.addEventListener("DOMContentLoaded", function () {
           left: canvas.width / 2,
           top: canvas.height / 2,
           originX: "center",
-          originY: "center",
+          originY: "bottom", // IMPORTANT: Sits ON the surface
+          shadow: new fabric.Shadow({
+            color: "rgba(0,0,0,0.35)",
+            blur: 12,
+            offsetX: 4,
+            offsetY: 8,
+          }),
         });
 
         // Attach metadata to object
@@ -179,10 +184,98 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas.add(oImg);
         canvas.setActiveObject(oImg);
         updateItemCount();
+        sortObjectsByDepth();
       },
       { crossOrigin: "anonymous" },
     );
   }
+
+  // --- REALISTIC DEPTH & PERSPECTIVE ---
+  function sortObjectsByDepth() {
+    const objects = canvas.getObjects().filter((o) => o.productId);
+
+    // Sort items so those further down (higher Y) are in front
+    objects.sort((a, b) => {
+      const aBottom = a.top; // originY is bottom
+      const bBottom = b.top;
+      return aBottom - bBottom;
+    });
+
+    objects.forEach((obj) => {
+      applyPerspectiveScale(obj);
+      obj.bringToFront();
+    });
+
+    canvas.renderAll();
+  }
+
+  /**
+   * Adjusts object scale based on vertical position to simulate depth
+   * Higher Y (closer) = Larger | Lower Y (further) = Smaller
+   */
+  function applyPerspectiveScale(obj) {
+    if (!obj.overlayScale) return;
+
+    // The range of the altar "floor" on canvas
+    // Assume 20% to 90% of height is the usable surface
+    const floorTop = canvas.height * 0.2;
+    const floorBottom = canvas.height * 0.9;
+    const currentY = obj.top;
+
+    // Linear interpolation: scale factor between 0.7 (back) and 1.3 (front)
+    const factorBack = 0.75;
+    const factorFront = 1.15;
+
+    let relativePos = (currentY - floorTop) / (floorBottom - floorTop);
+    relativePos = Math.max(0, Math.min(1, relativePos)); // Clamp 0-1
+
+    const perspectiveFactor =
+      factorBack + relativePos * (factorFront - factorBack);
+
+    // Update Scale
+    const targetScale = obj.overlayScale * perspectiveFactor;
+    if (Math.abs(obj.scaleX - targetScale) > 0.01) {
+      obj.scale(targetScale);
+    }
+
+    // Dynamic Shadow based on depth
+    if (obj.shadow) {
+      obj.shadow.blur = 8 + relativePos * 8;
+      obj.shadow.offsetX = 2 + relativePos * 6;
+      obj.shadow.offsetY = 4 + relativePos * 10;
+      obj.shadow.color = `rgba(0,0,0,${0.25 + relativePos * 0.2})`;
+    }
+  }
+
+  // selection highlight
+  canvas.on("selection:created", (e) => {
+    if (e.target.productId) {
+      e.target.set("stroke", "rgba(201,168,76,0.5)");
+      e.target.set("strokeWidth", 2);
+    }
+  });
+  canvas.on("selection:cleared", (e) => {
+    canvas.getObjects().forEach((obj) => {
+      obj.set("stroke", null);
+      obj.set("strokeWidth", 0);
+    });
+  });
+
+  canvas.on("object:moving", sortObjectsByDepth);
+  canvas.on("object:scaling", (e) => {
+    // If the user manually scales, update their "base" scale so perspective still works
+    const obj = e.target;
+    if (obj.overlayScale) {
+      // Back-calculate what the base scale should be
+      const floorTop = canvas.height * 0.2;
+      const floorBottom = canvas.height * 0.9;
+      let relativePos = (obj.top - floorTop) / (floorBottom - floorTop);
+      relativePos = Math.max(0, Math.min(1, relativePos));
+
+      const perspectiveFactor = 0.75 + relativePos * (1.15 - 0.75);
+      obj.overlayScale = obj.scaleX / perspectiveFactor;
+    }
+  });
 
   // --- ITEM COUNT BADGE ---
   const itemCountEl = document.getElementById("altar-item-count");
