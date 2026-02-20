@@ -74,6 +74,7 @@ class Altar_AJAX
                 'overlay_png'   => $overlay_url,
                 'overlay_scale' => get_post_meta($product_id, '_altar_overlay_scale', true),
                 'altar_type'    => get_post_meta($product_id, '_altar_type', true),
+                'default_variation_id' => $product->is_type('variable') ? $product->get_children()[0] : 0,
             ];
         }
 
@@ -98,10 +99,12 @@ class Altar_AJAX
             wp_send_json_error(__('Failed to save preview image.', 'altar-configurator'));
         }
 
-        // 2. Add to Cart
         if (! did_action('woocommerce_before_calculate_totals') && ! WC()->cart) {
             wc_load_cart();
         }
+
+        // 2. Clear Cart to avoid duplicates and ensure purely this bundle
+        WC()->cart->empty_cart();
 
         $config_id = uniqid('altar_');
 

@@ -323,22 +323,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemCounts = {}; // { "id:vid": { productId, variationId, type, qty } }
 
     // Add Base Altar first if it exists
-    if (currentBase) {
-      const key = `${currentBase.id}:${currentBase.default_variation_id || 0}`;
+    if (currentBase && currentBase.id) {
+      const bId = parseInt(currentBase.id);
+      const bVId = parseInt(currentBase.default_variation_id || 0);
+      const key = `${bId}:${bVId}`;
       itemCounts[key] = {
-        product_id: currentBase.id,
-        variation_id: currentBase.default_variation_id || 0,
-        type: currentBase.altar_type,
+        product_id: bId,
+        variation_id: bVId,
+        type: currentBase.altar_type || "altar_base",
         qty: 1,
       };
     }
 
     objects.forEach((obj) => {
-      const key = `${obj.productId}:${obj.variationId}`;
+      const pId = parseInt(obj.productId);
+      const vId = parseInt(obj.variationId || 0);
+      const key = `${pId}:${vId}`;
+
       if (!itemCounts[key]) {
         itemCounts[key] = {
-          product_id: obj.productId,
-          variation_id: obj.variationId,
+          product_id: pId,
+          variation_id: vId,
           type: obj.altarType || "",
           qty: 0,
         };
@@ -347,6 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const finalItems = Object.values(itemCounts);
+    console.log("Altar Configurator: Sending Bundle Items:", finalItems);
 
     // Get Preview DataURL
     const previewData = canvas.toDataURL({
