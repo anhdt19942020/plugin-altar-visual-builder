@@ -40,9 +40,9 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
 
-  // Set Background (Demo Table)
+  // Set Background (Demo Table - Front Facing)
   fabric.Image.fromURL(
-    "https://placehold.co/800x600/3d2b1f/white?text=Altar+Table",
+    "https://placehold.co/1200x800/2a1a0a/C9A84C?text=Ban+Tho+Chinh+Dien+(Front+View)",
     function (img) {
       img.set({
         scaleX: canvas.width / img.width,
@@ -164,14 +164,14 @@ document.addEventListener("DOMContentLoaded", function () {
         oImg.scale(scale);
         oImg.set({
           left: canvas.width / 2,
-          top: canvas.height / 2,
+          top: canvas.height * 0.7, // Positioned on target surface area
           originX: "center",
-          originY: "bottom", // IMPORTANT: Sits ON the surface
+          originY: "bottom",
           shadow: new fabric.Shadow({
-            color: "rgba(0,0,0,0.35)",
-            blur: 12,
-            offsetX: 4,
-            offsetY: 8,
+            color: "rgba(0,0,0,0.3)",
+            blur: 6,
+            offsetX: 0, // Centered for front view
+            offsetY: 3,
           }),
         });
 
@@ -216,15 +216,14 @@ document.addEventListener("DOMContentLoaded", function () {
   function applyPerspectiveScale(obj) {
     if (!obj.overlayScale) return;
 
-    // The range of the altar "floor" on canvas
-    // Assume 20% to 90% of height is the usable surface
-    const floorTop = canvas.height * 0.2;
-    const floorBottom = canvas.height * 0.9;
+    // The range of the altar surface in front view
+    const floorTop = canvas.height * 0.5; // Back edge of the table
+    const floorBottom = canvas.height * 0.85; // Front edge of the table
     const currentY = obj.top;
 
-    // Linear interpolation: scale factor between 0.7 (back) and 1.3 (front)
-    const factorBack = 0.75;
-    const factorFront = 1.15;
+    // Subtle scale factor for front view: almost 1:1
+    const factorBack = 0.95;
+    const factorFront = 1.05;
 
     let relativePos = (currentY - floorTop) / (floorBottom - floorTop);
     relativePos = Math.max(0, Math.min(1, relativePos)); // Clamp 0-1
@@ -234,16 +233,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update Scale
     const targetScale = obj.overlayScale * perspectiveFactor;
-    if (Math.abs(obj.scaleX - targetScale) > 0.01) {
+    if (Math.abs(obj.scaleX - targetScale) > 0.005) {
       obj.scale(targetScale);
     }
 
-    // Dynamic Shadow based on depth
+    // Dynamic Shadow based on depth (Subtle for front view)
     if (obj.shadow) {
-      obj.shadow.blur = 8 + relativePos * 8;
-      obj.shadow.offsetX = 2 + relativePos * 6;
-      obj.shadow.offsetY = 4 + relativePos * 10;
-      obj.shadow.color = `rgba(0,0,0,${0.25 + relativePos * 0.2})`;
+      obj.shadow.blur = 4 + relativePos * 6;
+      obj.shadow.offsetX = 0; // Keep centered
+      obj.shadow.offsetY = 1 + relativePos * 4;
+      obj.shadow.color = `rgba(0,0,0,${0.2 + relativePos * 0.2})`;
     }
   }
 
