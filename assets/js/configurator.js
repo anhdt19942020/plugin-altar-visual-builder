@@ -146,17 +146,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         canvas.add(oImg);
         canvas.setActiveObject(oImg);
+        updateItemCount();
       },
       { crossOrigin: "anonymous" },
     );
   }
 
-  // --- CANVAS CONTROLS (Z-INDEX) ---
-  // (You can add UI buttons for these later, logic is simple:)
-  /*
-  function bringFront() { canvas.getActiveObject()?.bringToFront(); }
-  function sendBack() { canvas.getActiveObject()?.sendToBack(); }
-  */
+  // --- ITEM COUNT BADGE ---
+  const itemCountEl = document.getElementById("altar-item-count");
+
+  function updateItemCount() {
+    const count = canvas.getObjects().filter((o) => o.productId).length;
+    if (itemCountEl) {
+      if (count === 0) {
+        itemCountEl.textContent = "";
+      } else {
+        itemCountEl.textContent = count + " vật phẩm đã được thêm";
+      }
+    }
+  }
+
+  canvas.on("object:removed", updateItemCount);
 
   // Handle Remove Item (Delete Key)
   window.addEventListener("keydown", function (e) {

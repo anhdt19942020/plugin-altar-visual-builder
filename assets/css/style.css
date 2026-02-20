@@ -1,186 +1,528 @@
-.altar-configurator {
-  display: flex;
-  gap: 20px;
-  background: #fdfdfd;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  font-family: "Outfit", sans-serif;
-  max-width: 1200px;
-  margin: 20px auto;
+/* ================================================
+   ALTAR VISUAL BUILDER — Premium Dark Edition
+   Palette: Deep Lacquer #0D0905 / Gold #C9A84C / 
+            Warm Sand #F5EDD8 / Ember #8B3A2A
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* ---- RESET & ROOT TOKENS ---- */
+.altar-configurator *,
+.altar-configurator *::before,
+.altar-configurator *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+.altar-configurator {
+  --color-bg:        #0D0905;
+  --color-surface:   #16100A;
+  --color-elevated:  #1E1610;
+  --color-border:    rgba(201,168,76, 0.18);
+  --color-border-hover: rgba(201,168,76, 0.55);
+  --color-gold:      #C9A84C;
+  --color-gold-light:#E8C96A;
+  --color-gold-dark: #9A7D35;
+  --color-ember:     #8B3A2A;
+  --color-sand:      #F5EDD8;
+  --color-muted:     #8A7D6A;
+  --color-text:      #EDE4D0;
+  --color-success:   #5A9E6A;
+  --color-error:     #C0453A;
+
+  display: flex;
+  gap: 0;
+  background: var(--color-bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text);
+  min-height: 640px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px var(--color-border);
+  max-width: 1320px;
+  margin: 24px auto;
+  position: relative;
+}
+
+/* ================================================
+   SIDEBAR
+   ================================================ */
 .altar-sidebar {
-  width: 300px; /* Increased for search box */
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Sidebar Header */
+.altar-sidebar-header {
+  padding: 22px 22px 18px;
+  background: linear-gradient(180deg, rgba(201,168,76,0.06) 0%, transparent 100%);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .altar-sidebar h3 {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #333;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
 
-/* --- Search Box --- */
+.altar-sidebar h3::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(180deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  border-radius: 2px;
+}
+
+/* ---- Search Box ---- */
 .altar-search-box {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
-}
-.altar-search-box input {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.9em;
-}
-.altar-search-box button {
-    padding: 8px 15px;
-    background: #333;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+  padding: 16px 22px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* --- Results List (Item Library) --- */
+.altar-search-box input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.altar-search-box input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+
+.altar-search-box input::placeholder {
+  color: var(--color-muted);
+}
+
+.altar-search-box button {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  color: #0D0905;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.altar-search-box button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.altar-search-box button:active {
+  transform: translateY(0);
+}
+
+/* ---- Results List ---- */
 .item-library {
   flex: 1;
   overflow-y: auto;
-  min-height: 300px;
-  max-height: 600px;
+  padding: 14px 14px 6px;
+  min-height: 200px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold-dark) transparent;
+}
+
+.item-library::-webkit-scrollbar {
+  width: 4px;
+}
+.item-library::-webkit-scrollbar-track { background: transparent; }
+.item-library::-webkit-scrollbar-thumb {
+  background: var(--color-gold-dark);
+  border-radius: 4px;
 }
 
 .search-hint {
-    font-size: 0.9em;
-    color: #888;
-    text-align: center;
-    padding: 40px 10px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  text-align: center;
+  padding: 40px 14px;
+  line-height: 1.6;
 }
 
-/* --- Product Card --- */
-.altar-product-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background: #fafafa;
-    transition: all 0.2s ease;
+.search-hint::before {
+  content: '🔍';
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
+
+/* ---- Product Card ---- */
+.altar-product-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--color-elevated);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
 .altar-product-card:hover {
-    border-color: #d4af37;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: var(--color-border-hover);
+  background: rgba(201,168,76,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+
+.card-thumb {
+  flex-shrink: 0;
 }
 
 .card-thumb img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-    background: #fff;
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: block;
 }
 
 .card-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .product-name {
-    font-weight: bold;
-    font-size: 0.9em;
-    color: #333;
-    line-height: 1.2;
-    margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-sand);
+  line-height: 1.3;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-price {
-    font-size: 0.85em;
-    color: #b8860b;
+  font-size: 0.8rem;
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+.product-price ins {
+  text-decoration: none;
 }
 
 .add-to-canvas-btn {
-    padding: 6px 12px;
-    font-size: 0.75em;
-    cursor: pointer;
-    background: #d4af37;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
+  flex-shrink: 0;
+  padding: 7px 13px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-gold);
+  border: 1px solid var(--color-gold-dark);
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
 }
+
 .add-to-canvas-btn:hover {
-    background: #b8860b;
+  background: var(--color-gold);
+  color: #0D0905;
+  border-color: var(--color-gold);
 }
 
-/* --- Canvas --- */
-.altar-canvas-wrapper {
-  flex: 1;
-  background: #eee;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+/* ---- Canvas Toolbar (Divider) ---- */
+.altar-canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--color-elevated);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
-canvas {
-  display: block;
-  max-width: 100%;
+.altar-canvas-toolbar span {
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: auto;
 }
 
-/* --- Controls --- */
+.altar-canvas-toolbar button {
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.altar-canvas-toolbar button:hover {
+  color: var(--color-text);
+  border-color: var(--color-muted);
+}
+
+/* ---- Controls (Add to Cart) ---- */
 .altar-controls {
-    margin-top: auto;
+  padding: 16px 22px;
+  border-top: 1px solid var(--color-border);
+  background: linear-gradient(0deg, rgba(201,168,76,0.04) 0%, transparent 100%);
+}
+
+.altar-item-count {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 #add-to-cart-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
-  color: white;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  color: #0D0905;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
-  margin-top: 10px;
-  transition: opacity 0.2s;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+#add-to-cart-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+#add-to-cart-btn:hover::before {
+  transform: translateX(100%);
 }
 
 #add-to-cart-btn:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(201,168,76,0.35);
 }
 
 #add-to-cart-btn:disabled {
-  background: #ccc;
+  background: #2A2520;
+  color: var(--color-muted);
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+#add-to-cart-btn:disabled::before {
+  display: none;
 }
 
 #altar-status {
-    margin-top: 10px;
-    font-size: 0.9em;
-    text-align: center;
+  margin-top: 10px;
+  font-size: 0.82rem;
+  text-align: center;
+  min-height: 20px;
+  color: var(--color-muted);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
+#altar-status p {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  animation: altar-fadein 0.3s ease;
+}
+
+#altar-status p[style*="green"] {
+  background: rgba(90,158,106,0.15);
+  border: 1px solid rgba(90,158,106,0.3);
+  color: #7DD890 !important;
+}
+
+#altar-status p[style*="red"] {
+  background: rgba(192,69,58,0.15);
+  border: 1px solid rgba(192,69,58,0.3);
+  color: #E87A72 !important;
+}
+
+@keyframes altar-fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================
+   CANVAS AREA (RIGHT PANEL)
+   ================================================ */
+.altar-canvas-wrapper {
+  flex: 1;
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Canvas Header Bar */
+.altar-canvas-header {
+  padding: 14px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.altar-canvas-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  color: var(--color-gold);
+  letter-spacing: 0.05em;
+}
+
+.altar-canvas-hint {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+/* Canvas element: let fabric control size */
+.altar-canvas-wrapper canvas {
+  display: block;
+}
+
+/* Canvas Footer — status bar */
+.altar-canvas-footer {
+  padding: 8px 18px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+}
+
+.altar-canvas-footer kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  color: var(--color-muted);
+}
+
+/* ================================================
+   LOADING SKELETON (optional anim)
+   ================================================ */
+.altar-skeleton {
+  height: 72px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--color-elevated) 25%, rgba(201,168,76,0.05) 50%, var(--color-elevated) 75%);
+  background-size: 200% 100%;
+  animation: altar-shimmer 1.4s infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes altar-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ================================================
+   TOOLTIP ON CANVAS ITEMS
+   ================================================ */
+.altar-tooltip {
+  position: absolute;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: var(--color-text);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 900px) {
   .altar-configurator {
     flex-direction: column;
+    border-radius: 12px;
+    margin: 12px;
   }
+
   .altar-sidebar {
     width: 100%;
     order: 2;
+    border-right: none;
+    border-top: 1px solid var(--color-border);
+    max-height: 420px;
   }
+
   .altar-canvas-wrapper {
     order: 1;
-    height: 300px;
+    min-height: 360px;
+  }
+
+  .item-library {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .altar-canvas-header, .altar-canvas-footer {
+    display: none;
+  }
+  .altar-search-box {
+    padding: 12px;
+  }
+  .altar-controls {
+    padding: 12px;
   }
 }

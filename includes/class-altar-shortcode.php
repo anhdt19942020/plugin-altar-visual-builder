@@ -57,32 +57,76 @@ class Altar_Shortcode
         wp_enqueue_script('altar-configurator-js');
         wp_enqueue_style('altar-configurator-css');
 
+        // Preload Google Fonts for premium typography
+        echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
+        echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
+
         ob_start();
 ?>
         <div id="altar-configurator-container" class="altar-configurator">
+
+            <!-- ═══ LEFT SIDEBAR ═══ -->
             <div class="altar-sidebar">
-                <h3><?php _e('Product Search', 'altar-configurator'); ?></h3>
 
+                <!-- Sidebar Header -->
+                <div class="altar-sidebar-header">
+                    <h3><?php _e('Vật Phẩm Thờ Cúng', 'altar-configurator'); ?></h3>
+                </div>
+
+                <!-- Search Box -->
                 <div class="altar-search-box">
-                    <input type="text" id="altar-search-input" placeholder="<?php esc_attr_e('Search products...', 'altar-configurator'); ?>">
-                    <button id="altar-search-btn" class="button"><?php _e('Search', 'altar-configurator'); ?></button>
+                    <input type="text"
+                        id="altar-search-input"
+                        placeholder="<?php esc_attr_e('Tìm bát hương, lọ hoa…', 'altar-configurator'); ?>"
+                        autocomplete="off">
+                    <button id="altar-search-btn" aria-label="<?php esc_attr_e('Tìm kiếm', 'altar-configurator'); ?>">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                        <?php _e('Tìm', 'altar-configurator'); ?>
+                    </button>
                 </div>
 
+                <!-- Results -->
                 <div id="altar-product-results" class="item-library">
-                    <!-- Results will be injected here via JS -->
-                    <p class="search-hint"><?php _e('Search for items like "Bát hương" or "Lọ hoa"...', 'altar-configurator'); ?></p>
+                    <p class="search-hint"><?php _e('Gõ tên vật phẩm rồi bấm Tìm để thêm vào bàn thờ.', 'altar-configurator'); ?></p>
                 </div>
 
-                <hr>
+                <!-- Add to Cart -->
                 <div class="altar-controls">
-                    <button id="add-to-cart-btn" class="button alt"><?php _e('Add Bundle to Cart', 'altar-configurator'); ?></button>
+                    <div class="altar-item-count" id="altar-item-count"></div>
+                    <button id="add-to-cart-btn">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:6px">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                            <path d="M3 6h18M16 10a4 4 0 0 1-8 0" />
+                        </svg>
+                        <?php _e('Thêm Bộ Vào Giỏ Hàng', 'altar-configurator'); ?>
+                    </button>
                     <div id="altar-status"></div>
                 </div>
             </div>
 
+            <!-- ═══ CANVAS PANEL ═══ -->
             <div class="altar-canvas-wrapper">
+
+                <!-- Canvas Header -->
+                <div class="altar-canvas-header">
+                    <span class="altar-canvas-title"><?php _e('Bàn Thờ · Không Gian Trang Trí', 'altar-configurator'); ?></span>
+                    <span class="altar-canvas-hint"><?php _e('Kéo thả và sắp xếp vật phẩm theo ý muốn', 'altar-configurator'); ?></span>
+                </div>
+
+                <!-- Fabric.js Canvas -->
                 <canvas id="altar-canvas"></canvas>
+
+                <!-- Canvas Footer -->
+                <div class="altar-canvas-footer">
+                    <span><?php _e('Chọn vật phẩm để tùy chỉnh', 'altar-configurator'); ?></span>
+                    <span><kbd>Del</kbd> <?php _e('Xóa', 'altar-configurator'); ?></span>
+                    <span><kbd>Scroll</kbd> <?php _e('Thu phóng', 'altar-configurator'); ?></span>
+                </div>
             </div>
+
         </div>
 <?php
         return ob_get_clean();
