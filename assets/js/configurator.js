@@ -255,15 +255,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // selection highlight
   canvas.on("selection:created", (e) => {
-    if (e.target.productId) {
+    if (e.target && e.target.productId) {
       e.target.set("stroke", "rgba(201,168,76,0.5)");
       e.target.set("strokeWidth", 2);
     }
   });
   canvas.on("selection:cleared", (e) => {
     canvas.getObjects().forEach((obj) => {
-      obj.set("stroke", null);
-      obj.set("strokeWidth", 0);
+      if (obj) {
+        obj.set("stroke", null);
+        obj.set("strokeWidth", 0);
+      }
     });
   });
 
