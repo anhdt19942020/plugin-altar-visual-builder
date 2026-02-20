@@ -1,0 +1,12 @@
+# WordPress
+/node_modules/
+/assets/dist/
+.DS_Store
+Thumbs.db
+*.log
+/uploads/
+config.json
+
+# Local env
+.env
+.vscode/
