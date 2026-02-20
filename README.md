@@ -1,57 +1,89 @@
-# WordPress Plugin: Altar Configurator
+# 🏺 Altar Configurator - Premium Visual Builder
 
-A 2D drag-and-drop altar configurator for WooCommerce using Fabric.js.
+**Altar Configurator** là một WordPress Plugin cao cấp được thiết kế riêng cho các gian hàng WooCommerce bán đồ thờ cúng hoặc vật phẩm phong thủy. Plugin tích hợp Fabric.js để tạo ra một môi trường 2D trực quan, cho phép khách hàng tự sắp xếp, bài trí bàn thờ trước khi mua trọn bộ.
 
-## Description
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![WordPress](https://img.shields.io/badge/WordPress-6.0+-blue.svg)
+![WooCommerce](https://img.shields.io/badge/WooCommerce-7.0+-purple.svg)
 
-This plugin allows users to customize their altar setup by dragging and dropping ritual items onto an altar table in 2D.
-The final configuration can be added to the WooCommerce cart as a bundle of individual products.
+---
 
-## Features
+## ✨ Tính năng nổi bật
 
-- Fabric.js based 2D configurator.
-- Add/Remove items (Incense burner, Cups, Vases, etc.).
-- Drag, Scale, Rotate items.
-- Save preview image to the cart.
-- WooCommerce integration (guest support).
+- **Premium Dark UI**: Giao diện sang trọng với tông màu sơn mài đen và vàng đồng, tối ưu trải nghiệm khách hàng cao cấp.
+- **Realistic Perspective Engine**:
+  - **Auto-Scaling**: Vật phẩm tự động thu nhỏ khi kéo về phía sau và to lên khi kéo ra phía trước mặt bàn.
+  - **Dynamic Shadows**: Bóng đổ thông minh thay đổi độ mờ và hướng dựa trên vị trí của vật phẩm.
+  - **Depth Sorting**: Tự động sắp xếp lớp (Z-index) theo vị trí dọc, đảm bảo đồ phía trước luôn đè lên đồ phía sau.
+- **Base Altar System**: Cho phép chọn mẫu bàn thờ chính làm nền tảng trước khi thêm các đồ thờ lẻ.
+- **Tìm kiếm động**: Khách hàng tìm sản phẩm trực tiếp từ kho WooCommerce.
+- **WooCommerce Bundle**: Toàn bộ vật phẩm trên canvas được gom thành một bundle và thêm vào giỏ hàng chỉ với 1 click.
+- **Preview Image**: Tự động chụp ảnh phối cảnh của khách hàng và đính kèm vào đơn hàng cho quản trị viên.
 
-## How to Use Dynamic System
+---
 
-1.  **Configure Products**:
-    - Go to **Products > All Products**.
-    - Edit a product you want to appear in the configurator.
-    - In the **General** tab, scroll down to **Altar Configurator Settings**.
-    - Enter the **Overlay PNG URL** (a transparent background image of the product).
-    - (Optional) Set a **Default Scale** (e.g., 0.6) and **Altar Item Type**.
-    - Save the product.
-2.  **Using the Configurator**:
-    - Go to the page containing the `[altar_configurator]` shortcode.
-    - Use the **Search Bar** in the sidebar to find the products you configured.
-    - Click **Add to Altar** on any product result.
-    - Arrange, resize, or delete items on the canvas.
-    - Click **Add Bundle to Cart** to add all items to your WooCommerce cart.
+## 🛠 Hướng dẫn Cài đặt
 
-## Features
+### Cách 1: Cài đặt từ tệp ZIP (Dành cho người dùng)
 
-- **Dynamic Search**: No more hardcoded IDs.
-- **Z-Index Controls**: Use "Backspace" or "Delete" to remove items.
-- **Real-time Preview**: Generates an image of your layout and attaches it to the order.
-- **WooCommerce Sync**: Validates stock and pricing before adding to cart.
+1. Truy cập [GitHub Repository](https://github.com/anhdt19942020/plugin-altar-visual-builder).
+2. Bấm vào nút **Code** -> **Download ZIP**.
+3. Trong giao diện WordPress Admin, đi tới **Plugins > Add New > Upload Plugin**.
+4. Chọn file ZIP vừa tải và bấm **Install Now**.
+5. **Activate** plugin.
 
-## Installation
+### Cách 2: Sử dụng Git (Dành cho nhà phát triển)
 
-1. Upload the `altar-configurator` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Ensure WooCommerce is installed and active.
+```bash
+cd wp-content/plugins
+git clone https://github.com/anhdt19942020/plugin-altar-visual-builder.git altar-configurator
+```
 
-## Usage
+---
 
-Add the shortcode `[altar_configurator]` to any page where you want the configurator to appear.
+## 📖 Hướng dẫn sử dụng
 
-## Demo Products
+### 1. Cấu hình sản phẩm (Bắt buộc)
 
-For the configurator to work properly, create products in WooCommerce and map their IDs in the plugin settings (or via filter).
+Để sản phẩm xuất hiện trong bộ cấu hình, bạn cần cài đặt thông số cho chúng:
 
-## License
+1. Vào **Products > All Products** và chọn sản phẩm (ví dụ: Bát hương, Lọ hoa, hoặc Bàn thờ).
+2. Cuộn xuống phần **Product Data**, chọn tab **General**.
+3. Tại phần **Altar Configurator Settings**:
+   - **Overlay PNG URL**: Dán link ảnh PNG đã tách nền của sản phẩm (Quan trọng nhất).
+   - **Default Scale**: Tỉ lệ kích thước mặc định trên canvas (Ví dụ: 0.5).
+   - **Altar Item Type**: Chọn loại vật phẩm (Bát hương, Chén nước, hoặc **Base Altar** nếu là bàn thờ).
+4. Bấm **Update**.
 
-MIT
+### 2. Hiển thị bộ cấu hình
+
+Tạo một trang mới trong WordPress và dán shortcode sau vào nội dung:
+
+```text
+[altar_configurator]
+```
+
+---
+
+## 🎹 Phím tắt & Thao tác
+
+- **Kéo thả**: Di chuyển vật phẩm trên bàn thờ.
+- **Góc xoay/Co giãn**: Sử dụng các điểm điều khiển quanh vật phẩm đang chọn.
+- **Phím Delete / Backspace**: Xóa vật phẩm đang chọn khỏi bàn thờ.
+- **Cuộn chuột (Scroll)**: Thu phóng vật phẩm (nếu đang được chọn).
+
+---
+
+## ⚙️ Yêu cầu hệ thống
+
+- WordPress 6.0 trở lên.
+- WooCommerce 7.0 trở lên.
+- Trình duyệt hiện đại hỗ trợ HTML5 Canvas.
+
+## 📄 Giấy phép
+
+Sản phẩm được phát hành dưới giấy phép **MIT**.
+
+---
+
+_Phát triển bởi Maestro AI Orchestrator - 2025._
