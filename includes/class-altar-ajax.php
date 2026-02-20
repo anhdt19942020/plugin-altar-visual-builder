@@ -47,23 +47,33 @@ class Altar_AJAX
         $results  = [];
 
         foreach ($products as $product) {
+            $product_id = $product->get_id();
+            $overlay_url = get_post_meta($product_id, '_altar_overlay_png', true);
             $image_id = $product->get_image_id();
-            $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : wc_placeholder_img_src();
 
-            // Double check for cases where wp_get_attachment_image_url might fail despite having ID
+            // Priority: Featured Image > Altar Overlay > WooCommerce Placeholder
+            $image_url = '';
+            if ($image_id) {
+                $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+            }
+
+            if (!$image_url && !empty($overlay_url)) {
+                $image_url = $overlay_url;
+            }
+
             if (!$image_url) {
                 $image_url = wc_placeholder_img_src();
             }
 
             $results[] = [
-                'id'            => $product->get_id(),
+                'id'            => $product_id,
                 'type'          => $product->get_type(),
                 'name'          => $product->get_name(),
                 'price_html'    => $product->get_price_html(),
                 'image'         => $image_url,
-                'overlay_png'   => get_post_meta($product->get_id(), '_altar_overlay_png', true),
-                'overlay_scale' => get_post_meta($product->get_id(), '_altar_overlay_scale', true),
-                'altar_type'    => get_post_meta($product->get_id(), '_altar_type', true),
+                'overlay_png'   => $overlay_url,
+                'overlay_scale' => get_post_meta($product_id, '_altar_overlay_scale', true),
+                'altar_type'    => get_post_meta($product_id, '_altar_type', true),
             ];
         }
 
