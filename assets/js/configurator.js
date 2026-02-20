@@ -384,6 +384,11 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("Altar Configurator: Server Response:", data);
+        if (data.data && data.data.debug) {
+          console.log("  Added:", data.data.debug.added);
+          console.log("  Skipped:", data.data.debug.skipped);
+        }
         if (data.success) {
           statusDiv.innerHTML = `<p style="color:green;">${cfg.messages.success}</p>`;
           window.location.href = data.data.cart_url;

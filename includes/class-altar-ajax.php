@@ -93,6 +93,9 @@ class Altar_AJAX
             wp_send_json_error(__('No items to add.', 'altar-configurator'));
         }
 
+        // Debug: Log received items
+        error_log('[Altar Configurator] Received items: ' . print_r($items, true));
+
         // 1. Save Preview Image
         $image_url = $this->save_preview_image($preview_data);
         if (! $image_url) {
@@ -107,6 +110,8 @@ class Altar_AJAX
         WC()->cart->empty_cart();
 
         $config_id = uniqid('altar_');
+        $added   = [];
+        $skipped = [];
 
         foreach ($items as $item) {
             $product_id   = intval($item['product_id']);
@@ -114,10 +119,49 @@ class Altar_AJAX
             $quantity     = intval($item['qty']);
             $type         = sanitize_text_field($item['type']);
 
-            // Validate product
-            $product = wc_get_product($variation_id ? $variation_id : $product_id);
-            if (!$product || !$product->is_purchasable() || !$product->is_in_stock()) {
-                continue; // Skip invalid products
+            // Validate product exists
+            $product = wc_get_product($product_id);
+            if (!$product) {
+                $skipped[] = "ID {$product_id}: Product not found";
+                error_log("[Altar Configurator] Product not found: {$product_id}");
+                continue;
+            }
+
+            // For variable products, we need a valid variation
+            if ($product->is_type('variable')) {
+                if ($variation_id) {
+                    $variation = wc_get_product($variation_id);
+                    if (!$variation) {
+                        $skipped[] = "ID {$product_id}: Variation {$variation_id} not found";
+                        error_log("[Altar Configurator] Variation not found: {$variation_id}");
+                        continue;
+                    }
+                } else {
+                    // Auto-select first variation
+                    $children = $product->get_children();
+                    if (!empty($children)) {
+                        $variation_id = $children[0];
+                        error_log("[Altar Configurator] Auto-selected variation {$variation_id} for product {$product_id}");
+                    } else {
+                        $skipped[] = "ID {$product_id}: Variable product has no variations";
+                        error_log("[Altar Configurator] Variable product has no variations: {$product_id}");
+                        continue;
+                    }
+                }
+            }
+
+            // Check purchasable
+            $check_product = $variation_id ? wc_get_product($variation_id) : $product;
+            if (!$check_product->is_purchasable()) {
+                $skipped[] = "ID {$product_id}: Not purchasable (missing price?)";
+                error_log("[Altar Configurator] Not purchasable: {$product_id} (price: " . $check_product->get_price() . ")");
+                continue;
+            }
+
+            if (!$check_product->is_in_stock()) {
+                $skipped[] = "ID {$product_id}: Out of stock";
+                error_log("[Altar Configurator] Out of stock: {$product_id}");
+                continue;
             }
 
             $cart_item_data = [
@@ -129,12 +173,27 @@ class Altar_AJAX
                 ]
             ];
 
-            WC()->cart->add_to_cart($product_id, $quantity, $variation_id, [], $cart_item_data);
+            $result = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, [], $cart_item_data);
+
+            if ($result) {
+                $added[] = "ID {$product_id} (qty: {$quantity})";
+                error_log("[Altar Configurator] Added to cart: {$product_id}, qty: {$quantity}, variation: {$variation_id}");
+            } else {
+                $skipped[] = "ID {$product_id}: WC add_to_cart returned false";
+                error_log("[Altar Configurator] add_to_cart FAILED for: {$product_id}");
+            }
         }
+
+        error_log('[Altar Configurator] Added: ' . implode(', ', $added));
+        error_log('[Altar Configurator] Skipped: ' . implode(', ', $skipped));
 
         wp_send_json_success([
             'cart_url' => wc_get_cart_url(),
-            'message'  => __('Bundle added to cart.', 'altar-configurator')
+            'message'  => __('Bundle added to cart.', 'altar-configurator'),
+            'debug'    => [
+                'added'   => $added,
+                'skipped' => $skipped,
+            ]
         ]);
     }
 
