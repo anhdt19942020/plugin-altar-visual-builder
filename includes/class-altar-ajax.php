@@ -47,12 +47,20 @@ class Altar_AJAX
         $results  = [];
 
         foreach ($products as $product) {
+            $image_id = $product->get_image_id();
+            $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : wc_placeholder_img_src();
+
+            // Double check for cases where wp_get_attachment_image_url might fail despite having ID
+            if (!$image_url) {
+                $image_url = wc_placeholder_img_src();
+            }
+
             $results[] = [
                 'id'            => $product->get_id(),
                 'type'          => $product->get_type(),
                 'name'          => $product->get_name(),
                 'price_html'    => $product->get_price_html(),
-                'image'         => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+                'image'         => $image_url,
                 'overlay_png'   => get_post_meta($product->get_id(), '_altar_overlay_png', true),
                 'overlay_scale' => get_post_meta($product->get_id(), '_altar_overlay_scale', true),
                 'altar_type'    => get_post_meta($product->get_id(), '_altar_type', true),
