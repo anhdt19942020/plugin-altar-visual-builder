@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Altar Configurator
- * Plugin URI: https://github.com/anhdt19942020/altar-configurator
+ * Plugin URI: https://github.com/anhdt19942020/plugin-altar-visual-builder
  * Description: A 2D drag-and-drop altar configurator using Fabric.js with WooCommerce integration.
  * Version: 1.0.0
  * Author: Senior Engineer
