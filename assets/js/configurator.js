@@ -120,9 +120,41 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key === "Enter") searchProducts();
   });
 
+  let currentBase = null; // To store base altar product
+
   function addOverlayToCanvas(product) {
     if (!product.overlay_png) {
       alert("This product has no altar overlay configured.");
+      return;
+    }
+
+    if (product.altar_type === "altar_base") {
+      // Handle the main altar product
+      fabric.Image.fromURL(
+        product.overlay_png,
+        function (img) {
+          const scaleX = canvas.width / img.width;
+          const scaleY = canvas.height / img.height;
+          // Use the larger scale to cover, or fit. User usually wants fit for base.
+          const scale = Math.min(scaleX, scaleY);
+
+          img.set({
+            scaleX: scale,
+            scaleY: scale,
+            originX: "center",
+            originY: "center",
+            left: canvas.width / 2,
+            top: canvas.height / 2,
+            selectable: false,
+            evented: false,
+          });
+
+          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+          currentBase = product;
+          updateItemCount();
+        },
+        { crossOrigin: "anonymous" },
+      );
       return;
     }
 
@@ -156,7 +188,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const itemCountEl = document.getElementById("altar-item-count");
 
   function updateItemCount() {
-    const count = canvas.getObjects().filter((o) => o.productId).length;
+    let count = canvas.getObjects().filter((o) => o.productId).length;
+    if (currentBase) count++;
+
     if (itemCountEl) {
       if (count === 0) {
         itemCountEl.textContent = "";
@@ -185,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
   addToCartBtn.addEventListener("click", function () {
     const objects = canvas.getObjects().filter((obj) => obj.productId);
 
-    if (objects.length === 0) {
+    if (objects.length === 0 && !currentBase) {
       alert(cfg.messages.empty_canvas);
       return;
     }
@@ -195,6 +229,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Aggregate Items by productId:variationId
     const itemCounts = {}; // { "id:vid": { productId, variationId, type, qty } }
+
+    // Add Base Altar first if it exists
+    if (currentBase) {
+      const key = `${currentBase.id}:${currentBase.default_variation_id || 0}`;
+      itemCounts[key] = {
+        product_id: currentBase.id,
+        variation_id: currentBase.default_variation_id || 0,
+        type: currentBase.altar_type,
+        qty: 1,
+      };
+    }
 
     objects.forEach((obj) => {
       const key = `${obj.productId}:${obj.variationId}`;

@@ -42,11 +42,12 @@ class Altar_Admin
             'id'      => '_altar_type',
             'label'   => __('Altar Item Type', 'altar-configurator'),
             'options' => [
-                ''        => __('-- Select Type --', 'altar-configurator'),
-                'incense' => __('Incense burner', 'altar-configurator'),
-                'cup'     => __('Water cup', 'altar-configurator'),
-                'vase'    => __('Flower vase', 'altar-configurator'),
-                'other'   => __('Other decoration', 'altar-configurator'),
+                ''           => __('-- Select Type --', 'altar-configurator'),
+                'altar_base' => __('Base Altar', 'altar-configurator'),
+                'incense'    => __('Incense burner', 'altar-configurator'),
+                'cup'        => __('Water cup', 'altar-configurator'),
+                'vase'       => __('Flower vase', 'altar-configurator'),
+                'other'      => __('Other decoration', 'altar-configurator'),
             ],
         ]);
 
