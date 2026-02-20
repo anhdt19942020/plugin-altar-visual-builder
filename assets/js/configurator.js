@@ -149,7 +149,14 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-          currentBase = product;
+
+          // Ensure we store all necessary data for cart
+          currentBase = {
+            id: parseInt(product.id),
+            default_variation_id: parseInt(product.default_variation_id || 0),
+            altar_type: product.altar_type,
+            name: product.name,
+          };
           updateItemCount();
         },
         { crossOrigin: "anonymous" },
